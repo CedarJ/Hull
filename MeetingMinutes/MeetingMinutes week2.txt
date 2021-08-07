@@ -1,0 +1,14 @@
+Attend people: He Zhang/ XueSong Ji/ Hassan Iqbal/ Mukta Hiremath 
+Time: 7.30pm - 8.00Opm (ADL)
+
+Things we discussed during the client meeting: 
+
+1.Grading criteria for the course.
+
+2. The use of Github to manage the project and creation of team initial documentation.
+
+3.Agile development process, based on the Sprint framework（scrum process）.
+
+4.Users story & The definition of PO/DT/SM.
+
+5. Q&A
