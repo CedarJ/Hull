@@ -1,0 +1,14 @@
+Members: Hassan Iqbal/ XueSong Ji/ He Zhang/ Mukta Hiremath 
+Time: 6.00pm - 6.30pm (ADL)
+
+Summary of things discussed during the client meeting: 
+
+1) Some of the things like what went well, what didn't go well within the team during the sprint.
+
+2) Recaliberation of the scrumboard as it is quite basic.
+
+3) Different processes like flattening, combining, simplification, integration.
+
+4) Client asked us to download and compile the code before the next meeting.
+
+5) Discussion on how to improve the scrumboard for the next sprint retrospective.
