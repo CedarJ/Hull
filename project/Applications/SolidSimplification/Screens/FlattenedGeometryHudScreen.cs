@@ -31,6 +31,9 @@ namespace SolidSimplification.Screens
         // Track the buttons for mouse click callback.
         private List<Button> buttons;
 
+        // cache the current scene
+        private Scene scene;
+
         public FlattenedGeometryHudScreen(
             IApplicationManager applicationManager,
             IEventService eventService,
@@ -55,16 +58,39 @@ namespace SolidSimplification.Screens
             // Initialize all screen data
             buttons = new List<Button>();
 
+            scene = null;
+
             var loadDataButton = new Button(
                 text: "Load 3D Model",
                 position: new Vector2f(20, 20),
-                callback: LoadResult,
+                callback: LoadModel,
+                alignment: Shared.Menus.HorizontalAlignment.Left);
+
+            var projectXButton = new Button(
+                text: "Show X",
+                position: new Vector2f(20, 80),
+                callback: DrawResultX,
+                alignment: Shared.Menus.HorizontalAlignment.Left);
+
+            var projectYButton = new Button(
+                text: "Show Y",
+                position: new Vector2f(20, 140),
+                callback: DrawResultY,
+                alignment: Shared.Menus.HorizontalAlignment.Left);
+
+            var projectZButton = new Button(
+                text: "Show Z",
+                position: new Vector2f(20, 200),
+                callback: DrawResultZ,
                 alignment: Shared.Menus.HorizontalAlignment.Left);
 
             buttons.Add(loadDataButton);
+            buttons.Add(projectXButton);
+            buttons.Add(projectYButton);
+            buttons.Add(projectZButton);
         }
 
-        private void LoadResult()
+        private void LoadModel()
         {
             string filePath;
 
@@ -81,12 +107,8 @@ namespace SolidSimplification.Screens
             }
 
             filePath = openFileDialog.FileName;
-            
+
             var importer = new AssimpContext();
-
-            Scene scene = null;
-
-            var loadSuccessful = true;
 
             try
             {
@@ -94,13 +116,7 @@ namespace SolidSimplification.Screens
             }
             catch
             {
-                loadSuccessful = false;
-            }
-
-
-            // There was an issue trying to parse the input data.
-            if (!loadSuccessful)
-            {
+                // There was an issue trying to parse the input data.
                 notificationService.ShowToast(
                            ToastType.Error,
                            "An issue occurred while parsing the input data. Please check the format.");
@@ -108,13 +124,88 @@ namespace SolidSimplification.Screens
             }
 
             // We have successfully loaded the scenario!
-            notificationService.ShowToast(ToastType.Info, "Clipping...");
+            notificationService.ShowToast(ToastType.Info, "Loaded model successfully. Choose a projection axis. ");
+        }
+
+        private void DrawResultX()
+        {
+            if(scene == null)
+            {
+                notificationService.ShowToast(
+                               ToastType.Error,
+                               "No model loaded. Please load model first. ");
+                return;
+            }
 
             // Mapteks current implementation
             Task.Run(() =>
             {
                 // Existing hull generation technique
-                var clipResult = HullGenerator.Generate(scene);
+                var clipResult = HullGenerator.Generate(scene,1);
+
+                // ----------------------------------------------------------
+                // ----------- :TODO: Your code goes here -------------------
+                // ----------------------------------------------------------
+
+                if (clipResult.IsFailure)
+                {
+                    notificationService.ShowToast(
+                               ToastType.Error,
+                               "An issue occurred while performing the shape clipping.");
+                    return;
+                }
+
+                this.dataProvider.SetVisuals(clipResult.Value);
+            });
+        }
+
+        private void DrawResultY()
+        {
+            if (scene == null)
+            {
+                notificationService.ShowToast(
+                               ToastType.Error,
+                               "No model loaded. Please load model first. ");
+                return;
+            }
+
+            // Mapteks current implementation
+            Task.Run(() =>
+            {
+                // Existing hull generation technique
+                var clipResult = HullGenerator.Generate(scene, 2);
+
+                // ----------------------------------------------------------
+                // ----------- :TODO: Your code goes here -------------------
+                // ----------------------------------------------------------
+
+                if (clipResult.IsFailure)
+                {
+                    notificationService.ShowToast(
+                               ToastType.Error,
+                               "An issue occurred while performing the shape clipping.");
+                    return;
+                }
+
+                this.dataProvider.SetVisuals(clipResult.Value);
+            });
+        }
+
+        private void DrawResultZ()
+        {
+            if (scene == null)
+            {
+                notificationService.ShowToast(
+                               ToastType.Error,
+                               "No model loaded. Please load model first. ");
+                return;
+            }
+
+            // Mapteks current implementation
+            Task.Run(() =>
+            {
+                // Existing hull generation technique
+                var clipResult = HullGenerator.Generate(scene, 3);
 
                 // ----------------------------------------------------------
                 // ----------- :TODO: Your code goes here -------------------
