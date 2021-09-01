@@ -1,0 +1,85 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <ApplicationIcon></ApplicationIcon>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Applications\**" />
+    <Compile Remove="VisualStudio\**" />
+    <EmbeddedResource Remove="Applications\**" />
+    <EmbeddedResource Remove="VisualStudio\**" />
+    <None Remove="Applications\**" />
+    <None Remove="VisualStudio\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\luke.berry\.nuget\packages\opencvsharp4.runtime.win\4.4.0.20200725\build\netcoreapp\..\..\runtimes\win-x64\native\OpenCvSharpExtern.dll" />
+    <Content Remove="C:\Users\luke.berry\.nuget\packages\opencvsharp4.runtime.win\4.4.0.20200725\build\netcoreapp\..\..\runtimes\win-x64\native\opencv_videoio_ffmpeg440_64.dll" />
+    <Content Remove="C:\Users\luke.berry\.nuget\packages\opencvsharp4.runtime.win\4.4.0.20200725\build\netcoreapp\..\..\runtimes\win-x86\native\OpenCvSharpExtern.dll" />
+    <Content Remove="C:\Users\luke.berry\.nuget\packages\opencvsharp4.runtime.win\4.4.0.20200725\build\netcoreapp\..\..\runtimes\win-x86\native\opencv_videoio_ffmpeg440.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="4.1.0" />
+    <PackageReference Include="Clipper" Version="6.4.0" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.18.0" />
+    <PackageReference Include="Google.OrTools" Version="7.8.7959" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="OpenCvSharp4" Version="4.4.0.20200725" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.4.0.20200725" />
+    <PackageReference Include="SFML.NET" Version="2.5.0" />
+    <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
+    <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Background.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\DemoApp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Error.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\font.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Info.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Maptek.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Successful.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Warning.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if not exist &quot;$(TargetDir)Applications&quot; mkdir &quot;$(TargetDir)Applications&quot;&#xD;&#xA;if not exist &quot;$(TargetDir)Resources&quot; mkdir &quot;$(TargetDir)Resources&quot;" />
+  </Target>
+
+</Project>
