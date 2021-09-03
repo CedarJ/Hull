@@ -13,7 +13,8 @@ namespace SolidSimplification.HelperMethods
     public static class HullGenerator
     {
         // The current implementation is hard coded to create hulls along the Z axis.
-        public static Result<List<LineSegment>> Generate(Scene scene)
+        // axis can be either 1 for X, 2 for Y, or 3 for Z, default to Z
+        public static Result<List<LineSegment>> Generate(Scene scene, int axis)
         {
             var output = new List<LineSegment>();
             var shapes = new List<List<IntPoint>>();
@@ -24,18 +25,53 @@ namespace SolidSimplification.HelperMethods
 
                 foreach (var triangle in mesh.Faces)
                 {
-                    var p1 = new Vector3D(
-                        points[triangle.Indices[0]].X,
-                        points[triangle.Indices[0]].Y,
-                        0);
-                    var p2 = new Vector3D(
-                        points[triangle.Indices[1]].X,
-                        points[triangle.Indices[1]].Y,
-                        0);
-                    var p3 = new Vector3D(
-                        points[triangle.Indices[2]].X,
-                        points[triangle.Indices[2]].Y,
-                        0);
+                    Vector3D p1, p2, p3;
+
+                    if (axis == 1)
+                    {
+                        p1 = new Vector3D(
+                            points[triangle.Indices[0]].Y,
+                            points[triangle.Indices[0]].Z,
+                            0);
+                        p2 = new Vector3D(
+                            points[triangle.Indices[1]].Y,
+                            points[triangle.Indices[1]].Z,
+                            0);
+                        p3 = new Vector3D(
+                            points[triangle.Indices[2]].Y,
+                            points[triangle.Indices[2]].Z,
+                            0);
+                    }
+                    else if (axis == 2)
+                    {
+                        p1 = new Vector3D(
+                            points[triangle.Indices[0]].X,
+                            points[triangle.Indices[0]].Z,
+                            0);
+                        p2 = new Vector3D(
+                            points[triangle.Indices[1]].X,
+                            points[triangle.Indices[1]].Z,
+                            0);
+                        p3 = new Vector3D(
+                            points[triangle.Indices[2]].X,
+                            points[triangle.Indices[2]].Z,
+                            0);
+                    }
+                    else
+                    {
+                        p1 = new Vector3D(
+                            points[triangle.Indices[0]].X,
+                            points[triangle.Indices[0]].Y,
+                            0);
+                        p2 = new Vector3D(
+                            points[triangle.Indices[1]].X,
+                            points[triangle.Indices[1]].Y,
+                            0);
+                        p3 = new Vector3D(
+                            points[triangle.Indices[2]].X,
+                            points[triangle.Indices[2]].Y,
+                            0);
+                    }
 
                     if (p1 == p2 || p2 == p3 || p3 == p1)
                     {
