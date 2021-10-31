@@ -34,6 +34,9 @@ namespace SolidSimplification.Screens
         // cache the current scene
         private Scene scene;
 
+        // epsilon for simplification
+        private double epsilon;
+
         public FlattenedGeometryHudScreen(
             IApplicationManager applicationManager,
             IEventService eventService,
@@ -59,6 +62,7 @@ namespace SolidSimplification.Screens
             buttons = new List<Button>();
 
             scene = null;
+            epsilon = 0.5;
 
             var loadDataButton = new Button(
                 text: "Load 3D Model",
@@ -84,7 +88,14 @@ namespace SolidSimplification.Screens
                 callback: DrawResultZ,
                 alignment: Shared.Menus.HorizontalAlignment.Left);
 
+            var setEpsilonButton = new Button(
+                text: "Set Epsilon",
+                position: new Vector2f(20, 260),
+                callback: setEpsilon,
+                alignment: Shared.Menus.HorizontalAlignment.Left);
+
             buttons.Add(loadDataButton);
+            buttons.Add(setEpsilonButton);
             buttons.Add(projectXButton);
             buttons.Add(projectYButton);
             buttons.Add(projectZButton);
@@ -140,12 +151,26 @@ namespace SolidSimplification.Screens
             // Mapteks current implementation
             Task.Run(() =>
             {
-                // Existing hull generation technique
+                notificationService.ShowToast(ToastType.Info, "Generating Hull on X-axis...");
+
+                // hull generation
                 var clipResult = HullGenerator.Generate(scene,1);
 
-                // ----------------------------------------------------------
-                // ----------- :TODO: Your code goes here -------------------
-                // ----------------------------------------------------------
+                // hull simplification when epsilon is greater than 0
+                if (this.epsilon > 0)
+                {
+                    System.Diagnostics.Debug.Write("Number of lines before simplification: ");
+                    System.Diagnostics.Debug.Write(clipResult.Value.Count);
+                    System.Diagnostics.Debug.Write("\n");
+
+                    notificationService.ShowToast(ToastType.Info, "Simplifying...");
+
+                    clipResult = HullSimplifier.Simplify(clipResult.Value, epsilon);
+
+                    System.Diagnostics.Debug.Write("Number of lines after simplification: ");
+                    System.Diagnostics.Debug.Write(clipResult.Value.Count);
+                    System.Diagnostics.Debug.Write("\n");
+                }
 
                 if (clipResult.IsFailure)
                 {
@@ -172,13 +197,28 @@ namespace SolidSimplification.Screens
             // Mapteks current implementation
             Task.Run(() =>
             {
-                // Existing hull generation technique
+                notificationService.ShowToast(ToastType.Info,"Generating Hull on Y-axis...");
+
+                // hull generation
                 var clipResult = HullGenerator.Generate(scene, 2);
 
-                // ----------------------------------------------------------
-                // ----------- :TODO: Your code goes here -------------------
-                // ----------------------------------------------------------
+                // hull simplification when epsilon is greater than 0
+                if (this.epsilon > 0)
+                {
+                    System.Diagnostics.Debug.Write("Number of lines before simplification: ");
+                    System.Diagnostics.Debug.Write(clipResult.Value.Count);
+                    System.Diagnostics.Debug.Write("\n");
 
+                    notificationService.ShowToast(ToastType.Info, "Simplifying...");
+
+                    clipResult = HullSimplifier.Simplify(clipResult.Value, epsilon);
+
+                    System.Diagnostics.Debug.Write("Number of lines after simplification: ");
+                    System.Diagnostics.Debug.Write(clipResult.Value.Count);
+                    System.Diagnostics.Debug.Write("\n");
+                }
+
+                // error handling
                 if (clipResult.IsFailure)
                 {
                     notificationService.ShowToast(
@@ -204,13 +244,28 @@ namespace SolidSimplification.Screens
             // Mapteks current implementation
             Task.Run(() =>
             {
-                // Existing hull generation technique
+                notificationService.ShowToast(ToastType.Info, "Generating Hull on Z-axis...");
+
+                // hull generation
                 var clipResult = HullGenerator.Generate(scene, 3);
 
-                // ----------------------------------------------------------
-                // ----------- :TODO: Your code goes here -------------------
-                // ----------------------------------------------------------
+                // hull simplification when epsilon is greater than 0
+                if (this.epsilon > 0)
+                {
+                    System.Diagnostics.Debug.Write("Number of lines before simplification: ");
+                    System.Diagnostics.Debug.Write(clipResult.Value.Count);
+                    System.Diagnostics.Debug.Write("\n");
 
+                    notificationService.ShowToast(ToastType.Info, "Simplifying...");
+
+                    clipResult = HullSimplifier.Simplify(clipResult.Value, epsilon);
+
+                    System.Diagnostics.Debug.Write("Number of lines after simplification: ");
+                    System.Diagnostics.Debug.Write(clipResult.Value.Count);
+                    System.Diagnostics.Debug.Write("\n");
+                }
+
+                // error handling
                 if (clipResult.IsFailure)
                 {
                     notificationService.ShowToast(
@@ -221,6 +276,13 @@ namespace SolidSimplification.Screens
 
                 this.dataProvider.SetVisuals(clipResult.Value);
             });
+        }
+
+        // Set the epsilon value for hull simplification
+        private void setEpsilon()
+        {
+            string input = Microsoft.VisualBasic.Interaction.InputBox("Enter epsilon for hull simplification, 0 for no simplification", "Set Epsilon ", this.epsilon.ToString(), 0, 0);
+            this.epsilon = Convert.ToDouble(input);
         }
 
         public override void OnRender(RenderTarget target)
