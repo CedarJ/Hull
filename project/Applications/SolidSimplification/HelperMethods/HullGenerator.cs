@@ -1,4 +1,4 @@
-﻿using Assimp;
+using Assimp;
 using ClipperLib;
 using CSharpFunctionalExtensions;
 using SFML.System;
