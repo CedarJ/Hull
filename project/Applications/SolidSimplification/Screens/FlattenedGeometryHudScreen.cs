@@ -37,6 +37,9 @@ namespace SolidSimplification.Screens
         // epsilon for simplification
         private double epsilon;
 
+        // alpha for aggregation
+        private float alpha;
+
         public FlattenedGeometryHudScreen(
             IApplicationManager applicationManager,
             IEventService eventService,
@@ -94,8 +97,15 @@ namespace SolidSimplification.Screens
                 callback: setEpsilon,
                 alignment: Shared.Menus.HorizontalAlignment.Left);
 
+            var setAlphaButton = new Button(
+                text: "Set Alpha",
+                position: new Vector2f(20, 320),
+                callback: setAlpha,
+                alignment: Shared.Menus.HorizontalAlignment.Left);
+
             buttons.Add(loadDataButton);
             buttons.Add(setEpsilonButton);
+            buttons.Add(setAlphaButton);
             buttons.Add(projectXButton);
             buttons.Add(projectYButton);
             buttons.Add(projectZButton);
@@ -154,7 +164,7 @@ namespace SolidSimplification.Screens
                 notificationService.ShowToast(ToastType.Info, "Generating Hull on X-axis...");
 
                 // hull generation
-                var clipResult = HullGenerator.Generate(scene,1);
+                var clipResult = HullGenerator.Generate(scene,1, alpha);
 
                 // hull simplification when epsilon is greater than 0
                 if (this.epsilon > 0)
@@ -200,7 +210,7 @@ namespace SolidSimplification.Screens
                 notificationService.ShowToast(ToastType.Info,"Generating Hull on Y-axis...");
 
                 // hull generation
-                var clipResult = HullGenerator.Generate(scene, 2);
+                var clipResult = HullGenerator.Generate(scene, 2, alpha);
 
                 // hull simplification when epsilon is greater than 0
                 if (this.epsilon > 0)
@@ -247,7 +257,7 @@ namespace SolidSimplification.Screens
                 notificationService.ShowToast(ToastType.Info, "Generating Hull on Z-axis...");
 
                 // hull generation
-                var clipResult = HullGenerator.Generate(scene, 3);
+                var clipResult = HullGenerator.Generate(scene, 3, alpha);
 
                 // hull simplification when epsilon is greater than 0
                 if (this.epsilon > 0)
@@ -283,6 +293,13 @@ namespace SolidSimplification.Screens
         {
             string input = Microsoft.VisualBasic.Interaction.InputBox("Enter epsilon for hull simplification, 0 for no simplification", "Set Epsilon ", this.epsilon.ToString(), 0, 0);
             this.epsilon = Convert.ToDouble(input);
+        }
+
+        // Set alpha value for hull aggregation
+        private void setAlpha()
+        {
+            string input = Microsoft.VisualBasic.Interaction.InputBox("Enter integer alpha for hull aggregation, increase for convex and decrease for concave; if the output is incomplete or not closed, please increase the alpha; 0 for union only(recommended while side length gap is too large)", "Set alpha ", this.alpha.ToString(), 0, 0);
+            this.alpha = Convert.ToSingle(input);
         }
 
         public override void OnRender(RenderTarget target)
