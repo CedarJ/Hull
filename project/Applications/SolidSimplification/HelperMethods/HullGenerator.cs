@@ -6,6 +6,7 @@ using Shared.DataStructures;
 using SolidSimplification.Data;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace SolidSimplification.HelperMethods
@@ -14,7 +15,7 @@ namespace SolidSimplification.HelperMethods
     {
         // The current implementation is hard coded to create hulls along the Z axis.
         // axis can be either 1 for X, 2 for Y, or 3 for Z, default to Z
-        public static Result<List<LineSegment>> Generate(Scene scene, int axis)
+        public static Result<List<LineSegment>> Generate(Scene scene, int axis, float alpha)
         {
             var output = new List<LineSegment>();
             var shapes = new List<List<IntPoint>>();
@@ -162,21 +163,45 @@ namespace SolidSimplification.HelperMethods
             {
                 return Result.Failure<List<LineSegment>>("An error ocurred while attempting the clip operation.");
             }
-
-            foreach (var hull in currentHull)
+            
+            //Do aggregation opeation if alpha is valid
+            if (alpha != 0)
             {
-                for (int i = 0; i < hull.Count() - 1; i++)
-                {
-                    var start = new Vector2f(hull[i].X / 100f, hull[i].Y / 100f);
-                    var end = new Vector2f(hull[i + 1].X / 100f, hull[i + 1].Y / 100f);
+                var points1 = new List<PointF>();
 
-                    output.Add(new LineSegment(start, end));
+                foreach (var hull in currentHull)
+                {
+                    foreach (var point in hull)
+                    {
+                        points1.Add(new PointF(point.X / 100f, point.Y / 100f));
+                    }
                 }
 
+                var edges = AlphaShape.AlphaShape1(points1, alpha);
+                foreach (var edge in edges)
+                {
+                    var start = new Vector2f(edge.A.X, edge.A.Y);
+                    var end = new Vector2f(edge.B.X, edge.B.Y);
+                    output.Add(new LineSegment(start, end));
+                }
+            }
+            else
+            {
+                foreach (var hull in currentHull)
+                {
+                    for (int i = 0; i < hull.Count() - 1; i++)
+                    {
+                        var start = new Vector2f(hull[i].X / 100f, hull[i].Y / 100f);
+                        var end = new Vector2f(hull[i + 1].X / 100f, hull[i + 1].Y / 100f);
 
-                output.Add(new LineSegment(
-                    new Vector2f(hull[0].X / 100f, hull[0].Y / 100f),
-                    new Vector2f(hull.Last().X / 100f, hull.Last().Y / 100f)));
+                        output.Add(new LineSegment(start, end));
+                    }
+
+
+                    output.Add(new LineSegment(
+                        new Vector2f(hull[0].X / 100f, hull[0].Y / 100f),
+                        new Vector2f(hull.Last().X / 100f, hull.Last().Y / 100f)));
+                }
             }
 
             return output;
