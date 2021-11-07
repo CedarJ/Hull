@@ -163,9 +163,9 @@ namespace SolidSimplification.HelperMethods
             {
                 return Result.Failure<List<LineSegment>>("An error ocurred while attempting the clip operation.");
             }
-            
+
             //Do aggregation opeation if alpha is valid
-            if (alpha != 0)
+            /*if (alpha != 0)
             {
                 var points1 = new List<PointF>();
 
@@ -187,22 +187,62 @@ namespace SolidSimplification.HelperMethods
             }
             else
             {
-                foreach (var hull in currentHull)
+            foreach (var hull in currentHull)
+            {
+                for (int i = 0; i < hull.Count() - 1; i++)
                 {
-                    for (int i = 0; i < hull.Count() - 1; i++)
+                    var start = new Vector2f(hull[i].X / 100f, hull[i].Y / 100f);
+                    var end = new Vector2f(hull[i + 1].X / 100f, hull[i + 1].Y / 100f);
+
+                    output.Add(new LineSegment(start, end));
+                }
+
+
+                output.Add(new LineSegment(
+                    new Vector2f(hull[0].X / 100f, hull[0].Y / 100f),
+                    new Vector2f(hull.Last().X / 100f, hull.Last().Y / 100f)));
+            }*/
+
+            var tempnodes = new List<Node>();
+            var nodes = new List<Node>();
+
+
+            var count = 0;
+
+            
+            foreach (var hull in currentHull)
+            {
+                foreach (var point in hull)
+                {
+                    var temp = new Node((double)point.X / 100, (double)point.Y / 100);
+                    if (!tempnodes.Contains(temp))
                     {
-                        var start = new Vector2f(hull[i].X / 100f, hull[i].Y / 100f);
-                        var end = new Vector2f(hull[i + 1].X / 100f, hull[i + 1].Y / 100f);
-
-                        output.Add(new LineSegment(start, end));
+                        tempnodes.Add(temp);
                     }
-
-
-                    output.Add(new LineSegment(
-                        new Vector2f(hull[0].X / 100f, hull[0].Y / 100f),
-                        new Vector2f(hull.Last().X / 100f, hull.Last().Y / 100f)));
                 }
             }
+            foreach (var node in tempnodes)
+            {
+                nodes.Add(new Node(node.x, node.y, count));
+                count++;
+            }
+            count = 0;
+
+            Hull.setConvexHull(nodes);
+            var x = Hull.setConcaveHull(0, 20);
+
+            foreach (var line in x)
+            {
+                var start = new Vector2f((float)line.nodes[0].x, (float)line.nodes[0].y);
+                var end = new Vector2f((float)line.nodes[1].x, (float)line.nodes[1].y);
+                output.Add(new LineSegment(start, end));
+            }
+            Hull.unused_nodes.Clear();
+            Hull.hull_edges.Clear();
+            Hull.hull_concave_edges.Clear();
+
+            
+
 
             return output;
         }
